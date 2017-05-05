@@ -10,15 +10,17 @@ __all__=[
     "DB_TABLE_PHONE", "get_cfg"
          ]
 
-DB_TABLE_USER='t_mail'
-DB_TABLE_REG='t_phone'
-DB_TABLE_TAG='t_register'
-DB_TABLE_MAIL='t_tag'
-DB_TABLE_PHONE='t_user'
+DB_TABLE_USER='t_user'
+DB_TABLE_REG='t_register'
+DB_TABLE_TAG='t_tag'
+DB_TABLE_MAIL='t_mail'
+DB_TABLE_PHONE='t_phone'
 
 import os
 import ConfigParser
-
+from time import strftime, localtime
+from uuid import uuid1
+from hashlib import md5
 
 def get_cfg(file):
     cfg_abspath = (os.path.join((os.path.split(os.path.realpath(__file__)))[0], file))
@@ -33,3 +35,14 @@ def get_cfg(file):
     ret_dic = dict(host=host,port=port, database=database, user=user,password=password)
     return ret_dic
 
+def get_cur_time():
+    return strftime("%Y%m%d%H%M%S",localtime())
+
+
+def get_uuid():
+    return uuid1()
+
+def get_md5(src):
+    m_md5 = md5()
+    m_md5.update(src)
+    return m_md5.hexdigest()

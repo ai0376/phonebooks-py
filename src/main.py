@@ -5,13 +5,19 @@ __time__ = '2017/4/27'
 
 
 import web
-#import utils
+import utils
 import json
-import uuid
+
 
 urls = (
     '/phonebooks','Phonebooks',
 )
+
+dbinfo= utils.get_cfg('db.ini')
+
+db = web.database(dbn='mysql', user=dbinfo.get('user',''),pw=dbinfo.get('password',''),db=dbinfo.get('database',''),host=dbinfo.get('host',''), port=int(dbinfo.get('port','')))
+
+print('db',db)
 
 class Phonebooks:
     def POST(self):
@@ -31,7 +37,12 @@ class Phonebooks:
         1010: get_all_tags
         '''
         if op == 1001:
-            response={'ret':0,'msg':'success'}
+            ret = self.user_register(req_json)
+
+            if ret[0] is 0:
+                response={'ret':ret[0],'msg':ret[1],'rid':ret[2]}
+            else:
+                response={'ret':ret[0],'msg':ret[1]}
             return json.dumps(response)
             pass
         elif op == 1002:
@@ -56,11 +67,43 @@ class Phonebooks:
             return json.dumps({'ret':-1,'msg':'no method'})
             pass
 
+    def user_register(self,user_info):
 
+        rphone = user_info.get('phone','')
+        if not rphone.strip():
+            return (-1, 'phone empty')
+        var = dict(phone=rphone)
+        results = db.select(utils.DB_TABLE_REG, vars = var, where="phone=$phone")
+        rowcount = len(list(results))
+
+        if not rowcount: #no person
+            rid = utils.get_uuid()
+            rintime = utils.get_cur_time()
+            rname = user_info.get('name','')
+            remail = user_info.get('email', rphone)
+            rpassword = user_info.get('password','')
+            rpassword = utils.get_md5(rpassword)
+
+            ret = db.insert(utils.DB_TABLE_REG,rid=rid, phone=rphone,password=rpassword, name=rname, email=remail,intime=rintime)
+            print('ret:',ret)
+            if not ret:
+                return (0, 'success', rid)
+            else:
+                return (-1, 'register error')
+        else:
+            return (-1, 'user had registed')
+
+    def user_phone_manage_add(self):
+        pass
+
+    def user_phone_maneage_modify(self):
+        pass
+    
 app = web.application(urls, globals())
 application = app.wsgifunc()
 
 if __name__=='__main__':
 
-    #app.run()
+    app.run()
+    #print utils.get_md5('123456')
     pass
