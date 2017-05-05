@@ -13,7 +13,7 @@ urls = (
     '/phonebooks','Phonebooks',
 )
 
-dbinfo= utils.get_cfg('db.ini')
+dbinfo= utils.get_cfg('db.ini','mysql')
 
 db = web.database(dbn='mysql', user=dbinfo.get('user',''),pw=dbinfo.get('password',''),db=dbinfo.get('database',''),host=dbinfo.get('host',''), port=int(dbinfo.get('port','')))
 

@@ -22,25 +22,27 @@ from time import strftime, localtime
 from uuid import uuid1
 from hashlib import md5
 
-def get_cfg(file):
+def get_cfg(file,section):
     cfg_abspath = (os.path.join((os.path.split(os.path.realpath(__file__)))[0], file))
     config = ConfigParser.ConfigParser()
     config.read(cfg_abspath)
-    host = config.get('mysql','host')
-    port = config.get('mysql','port')
-    database= config.get('mysql','database')
-    user = config.get('mysql','user')
-    password = config.get('mysql','password')
+    if section == 'mysql':
+        host = config.get(section,'host')
+        port = config.get(section,'port')
+        database= config.get(section,'database')
+        user = config.get(section,'user')
+        password = config.get(section,'password')
 
-    ret_dic = dict(host=host,port=port, database=database, user=user,password=password)
-    return ret_dic
+        ret_dic = dict(host=host,port=port, database=database, user=user,password=password)
+        return ret_dic
+
 
 def get_cur_time():
     return strftime("%Y%m%d%H%M%S",localtime())
 
 
 def get_uuid():
-    return uuid1()
+    return str(uuid1())
 
 def get_md5(src):
     m_md5 = md5()
