@@ -16,8 +16,8 @@ urls = (
 class Phonebooks:
     def POST(self):
         data = web.data();
-        req_json= json.loads(data)
-        opid = req_json.get('opid',0)
+        req_json = json.loads(data)
+        op = req_json.get('op',0)
         '''
         1001: register
         1002: forgot password
@@ -30,13 +30,27 @@ class Phonebooks:
         1009: get_all_user
         1010: get_all_tags
         '''
-        if opid == 1001:
+        if op == 1001:
             response={'ret':0,'msg':'success'}
             return json.dumps(response)
             pass
-        elif opid == 1002:
+        elif op == 1002:
             response={'ret':0,'msg':'success'}
             return json.dumps(response)
+            pass
+        elif op == 1003:
+            pass
+        elif op == 1004:
+            pass
+        elif op == 1005:
+            pass
+        elif op == 1006:
+            pass
+        elif op == 1007:
+            pass
+        elif op == 1008:
+            pass
+        elif op == 1009:
             pass
         else:
             return json.dumps({'ret':-1,'msg':'no method'})
