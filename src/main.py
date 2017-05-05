@@ -98,7 +98,7 @@ class Phonebooks:
 
     def user_phone_maneage_modify(self):
         pass
-    
+
 app = web.application(urls, globals())
 application = app.wsgifunc()
 
