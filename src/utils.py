@@ -7,7 +7,9 @@ __time__ = '2017/4/27'
 __all__=[
     "DB_TABLE_USER", "DB_TABLE_REG",
     "DB_TABLE_TAG", "DB_TABLE_MAIL",
-    "DB_TABLE_PHONE", "get_cfg"
+    "DB_TABLE_PHONE", "get_cfg",
+    "get_cur_time", "get_uuid",
+    "get_md5"
          ]
 
 DB_TABLE_USER='t_user'
@@ -39,7 +41,6 @@ def get_cfg(file,section):
 
 def get_cur_time():
     return strftime("%Y%m%d%H%M%S",localtime())
-
 
 def get_uuid():
     return str(uuid1())
