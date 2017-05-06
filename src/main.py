@@ -117,7 +117,7 @@ class Phonebooks:
         uids = list(results)
         num = len(uids)
         return (0,'success', num)
-        
+
     def user_phone_manage_add(self):
         pass
 
