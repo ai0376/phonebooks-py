@@ -50,7 +50,13 @@ class Phonebooks:
             return json.dumps(response)
             pass
         elif op == 1003:
-            pass
+            ret = self.user_login(req_json)
+            if ret[0] is 0:
+                response={'ret':ret[0],'msg':ret[1],'num':ret[2]}
+            else:
+                response={'ret':ret[0],'msg':ret[1]}
+            return  json.dumps(response)
+
         elif op == 1004:
             pass
         elif op == 1005:
@@ -93,6 +99,25 @@ class Phonebooks:
         else:
             return (-1, 'user had registed')
 
+    def user_login(self, user_info):
+        uphone = user_info.get('phone','')
+        upassword = user_info.get('password','')
+        upassword = utils.get_md5(upassword)
+
+        if not uphone.strip():
+            return (-1, 'login phone empty')
+        var = dict(phone=uphone, password=upassword)
+        results = db.select(utils.DB_TABLE_REG, what="rid",vars=var, where="phone=$phone and password=$password")
+        rids = list(results)
+        rowcount = len(rids)
+        if not rowcount:
+            return (-1,"phone or password error")
+        rid = rids[0]['rid']
+        results = db.select(utils.DB_TABLE_USER, what="uid",where="rid='%s'" % (rid))
+        uids = list(results)
+        num = len(uids)
+        return (0,'success', num)
+        
     def user_phone_manage_add(self):
         pass
 
