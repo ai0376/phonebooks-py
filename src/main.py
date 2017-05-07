@@ -21,7 +21,7 @@ print('db',db)
 
 class Phonebooks:
     def POST(self):
-        data = web.data();
+        data = web.data()
         req_json = json.loads(data)
         op = req_json.get('op',0)
         '''
@@ -40,26 +40,34 @@ class Phonebooks:
             ret = self.user_register(req_json)
 
             if ret[0] is 0:
-                response={'ret':ret[0],'msg':ret[1],'rid':ret[2]}
+                response = {'ret':ret[0],'msg':ret[1],'rid':ret[2]}
             else:
-                response={'ret':ret[0],'msg':ret[1]}
+                response = {'ret':ret[0],'msg':ret[1]}
             return json.dumps(response)
             pass
         elif op == 1002:
-            response={'ret':0,'msg':'success'}
+            response = {'ret':0,'msg':'success'}
             return json.dumps(response)
             pass
-        elif op == 1003:
+
+        elif op == 1003: #user login
             ret = self.user_login(req_json)
             if ret[0] is 0:
-                response={'ret':ret[0],'msg':ret[1],'num':ret[2]}
+                response = {'ret':ret[0],'msg':ret[1],'num':ret[2],'rid':ret[3]}
             else:
-                response={'ret':ret[0],'msg':ret[1]}
+                response = {'ret':ret[0],'msg':ret[1]}
             return  json.dumps(response)
 
-        elif op == 1004:
+        elif op == 1004: #logout
+
             pass
-        elif op == 1005:
+        elif op == 1005: # user add
+            ret = self.user_phone_manage_add(req_json)
+            if ret[0] is 0:
+                response = {'ret':ret[0],'msg':ret[1]}
+            else:
+                response = {'ret':ret[0],'msg':ret[1]}
+            return json.dumps(response)
             pass
         elif op == 1006:
             pass
@@ -74,7 +82,6 @@ class Phonebooks:
             pass
 
     def user_register(self,user_info):
-
         rphone = user_info.get('phone','')
         if not rphone.strip():
             return (-1, 'phone empty')
@@ -116,12 +123,44 @@ class Phonebooks:
         results = db.select(utils.DB_TABLE_USER, what="uid",where="rid='%s'" % (rid))
         uids = list(results)
         num = len(uids)
-        return (0,'success', num)
+        return (0,'success', num, rid)
 
-    def user_phone_manage_add(self):
+    def user_phone_manage_add(self, user_info):
+        rid = user_info.get('rid','')
+        users = user_info.get('users','')
+        for user in users:
+            uname = user.get('name','')
+            if uname.strip == '':
+                return (-1, 'failed')
+            phones = user.get('phones','')
+            uid = utils.get_uuid()
+            curtime = utils.get_cur_time()
+            ret = db.insert(utils.DB_TABLE_USER,uid=uid,rid=rid,name=uname,intime=curtime)
+            print('ret:',ret)
+
+            for phone in phones:   #insert into t_phone
+                p = phone.get('phone','')
+                if p.strip() != '':
+                    pid = utils.get_uuid()
+                    db.insert(utils.DB_TABLE_PHONE,pid=pid,uid=uid,phone=p,intime=curtime)
+                    pass
+            tags = user.get('tags','')
+            for tag in tags:
+                tname = tag.get('name','')
+                if tname.strip() != '':
+                    tid = utils.get_uuid()
+                    db.insert(utils.DB_TABLE_TAG,tid=tid,uid=uid,name=tname,intime=curtime)
+            mails = user.get('mails','')
+            for mail in mails:
+                mail_str = mail.get('mail','')
+                if mail_str.strip() != '':
+                    mid = utils.get_uuid();
+                    db.insert(utils.DB_TABLE_MAIL,mid=mid,uid=uid,mail=mail_str,intime=curtime)
+
+        return (0,'success')
         pass
 
-    def user_phone_maneage_modify(self):
+    def user_phone_maneage_modify(self, user_info):
         pass
 
 app = web.application(urls, globals())
