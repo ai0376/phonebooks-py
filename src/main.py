@@ -69,8 +69,14 @@ class Phonebooks:
             return json.dumps(response)
             pass
         elif op == 1006: #user phone modify
+            ret = self.user_phone_manage_modify(req_json)
+            if ret[0] is 0:
+                response = {'ret':ret[0],'msg':ret[1],'rid':ret[2],'users':ret[3]}
+            else:
+                response = {'ret':ret[0],'msg':ret[1]}
+            return json.dumps(response)
             pass
-        elif op == 1007: #user phone delte
+        elif op == 1007: #user phone delete
             ret =  self.user_phone_manage_delete(req_json)
             if ret[0] is 0:
                 response = {'ret':ret[0],'msg':ret[1]}
