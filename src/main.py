@@ -34,7 +34,6 @@ class Phonebooks:
         1007: user delete
         1008: search
         1009: get_all_user
-        1010: get_all_tags
         '''
         if op == 1001:
             ret = self.user_register(req_json)
@@ -61,7 +60,7 @@ class Phonebooks:
         elif op == 1004: #logout
 
             pass
-        elif op == 1005: # user add
+        elif op == 1005: # user phone add
             ret = self.user_phone_manage_add(req_json)
             if ret[0] is 0:
                 response = {'ret':ret[0],'msg':ret[1]}
@@ -69,10 +68,16 @@ class Phonebooks:
                 response = {'ret':ret[0],'msg':ret[1]}
             return json.dumps(response)
             pass
-        elif op == 1006:
+        elif op == 1006: #user phone modify
             pass
-        elif op == 1007:
-            pass
+        elif op == 1007: #user phone delte
+            ret =  self.user_phone_manage_delete(req_json)
+            if ret[0] is 0:
+                response = {'ret':ret[0],'msg':ret[1]}
+            else:
+                response = {'ret':ret[0],'msg':ret[1]}
+
+            return json.dumps(response)
         elif op == 1008:
             pass
         elif op == 1009:
@@ -144,24 +149,32 @@ class Phonebooks:
                     pid = utils.get_uuid()
                     db.insert(utils.DB_TABLE_PHONE,pid=pid,uid=uid,phone=p,intime=curtime)
                     pass
-            tags = user.get('tags','')
-            for tag in tags:
-                tname = tag.get('name','')
-                if tname.strip() != '':
-                    tid = utils.get_uuid()
-                    db.insert(utils.DB_TABLE_TAG,tid=tid,uid=uid,name=tname,intime=curtime)
             mails = user.get('mails','')
             for mail in mails:
                 mail_str = mail.get('mail','')
                 if mail_str.strip() != '':
-                    mid = utils.get_uuid();
+                    mid = utils.get_uuid()
                     db.insert(utils.DB_TABLE_MAIL,mid=mid,uid=uid,mail=mail_str,intime=curtime)
 
         return (0,'success')
         pass
 
-    def user_phone_maneage_modify(self, user_info):
+    def user_phone_manage_modify(self, user_info):
         pass
+    def user_phone_manage_delete(self, user_info):
+        users = user_info.get('users','')
+        id_list = ''
+        for user in users:
+            uid = user.get('uid','')
+            if uid.strip() != '':
+                if id_list is '':
+                    id_list = "'%s'" % uid
+                else:
+                    id_list = "%s,'%s'" %(id_list, uid)
+        db.delete(utils.DB_TABLE_MAIL ,where="uid in (%s)" % (id_list))
+        db.delete(utils.DB_TABLE_PHONE ,where="uid in (%s)" % (id_list))
+        db.delete(utils.DB_TABLE_USER ,where="uid in (%s)" % (id_list))
+        return (0,'success')
 
 app = web.application(urls, globals())
 application = app.wsgifunc()

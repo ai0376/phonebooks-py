@@ -14,7 +14,6 @@ __all__=[
 
 DB_TABLE_USER='t_user'
 DB_TABLE_REG='t_register'
-DB_TABLE_TAG='t_tag'
 DB_TABLE_MAIL='t_mail'
 DB_TABLE_PHONE='t_phone'
 
