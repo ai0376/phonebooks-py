@@ -81,7 +81,12 @@ class Phonebooks:
         elif op == 1008:
             pass
         elif op == 1009:
-            pass
+            ret = self.user_phone_get_all(req_json)
+            if ret[0] is 0:
+                response = {'ret':ret[0],'msg':ret[1],'rid':ret[2],'users':ret[3]}
+            else:
+                response = {'ret':ret[0],'msg':ret[1]}
+            return json.dumps(response)
         else:
             return json.dumps({'ret':-1,'msg':'no method'})
             pass
@@ -176,6 +181,36 @@ class Phonebooks:
         db.delete(utils.DB_TABLE_PHONE ,where="uid in ($uids)",vars=vars)
         db.delete(utils.DB_TABLE_USER ,where="uid in ($uids)",vars=vars)
         return (0,'success')
+    def user_phone_get_all(self, user_info):
+        rid = user_info.get('rid','')
+        vars = dict(rid=rid)
+        user_list = []
+        '''
+        tables = utils.DB_TABLE_USER +' u,'+utils.DB_TABLE_PHONE+' p,'+utils.DB_TABLE_MAIL+' m'
+        results = db.select(tables , what='u.uid,u.name,p.phone,m.mail',where="u.rid=$rid AND u.uid=m.uid AND m.uid=p.uid",vars=vars)
+        for user in results:
+            user_dic =dict(uid=user['uid'],name=user['name'],phone=user['phone'],mail=)
+        '''
+        results = db.select(utils.DB_TABLE_USER, what='uid,name', where="rid=$rid",vars=vars)
+        for result in results:
+            uid = result['uid']
+            uname = result['name']
+            phone_list = []
+            mail_list = []
+            phone_results = db.select(utils.DB_TABLE_PHONE, what='phone',where="uid=$uid",vars=dict(uid=uid))
+            for phone_result in phone_results:
+                phone = phone_result['phone']
+                phone_dic = dict(phone=phone)
+                phone_list.append(phone_dic)
+            mail_results = db.select(utils.DB_TABLE_MAIL, what='mail',where="uid=$uid",vars=dict(uid=uid))
+            for mail_result in mail_results:
+                mail = mail_result['mail']
+                mail_dic = dict(mail=mail)
+                mail_list.append(mail_dic)
+            user_dic = dict(uid=uid,name=uname,phones=phone_list,mails=mail_list)
+            user_list.append(user_dic)
+        return (0, 'success',rid,user_list)
+        pass
 
 app = web.application(urls, globals())
 application = app.wsgifunc()

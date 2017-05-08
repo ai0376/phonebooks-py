@@ -64,9 +64,10 @@
 
 ## 人员查询
 ```
-获取所有人sql
-
-SELECT  u.name,p.phone,m.mail,t.name FROM t_user u,t_phone p,t_mail m,t_tag t WHERE u.rid='10b358cf-3185-11e7-9fd3-3010b3c7bffa' GROUP BY u.uid
+{
+    "op":1009,
+    "rid":"10b358cf-3185-11e7-9fd3-3010b3c7bffa"
+}
 ```
 
 
