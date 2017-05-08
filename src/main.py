@@ -63,7 +63,7 @@ class Phonebooks:
         elif op == 1005: # user phone add
             ret = self.user_phone_manage_add(req_json)
             if ret[0] is 0:
-                response = {'ret':ret[0],'msg':ret[1]}
+                response = {'ret':ret[0],'msg':ret[1],'rid':ret[2],'users':ret[3]}
             else:
                 response = {'ret':ret[0],'msg':ret[1]}
             return json.dumps(response)
@@ -138,8 +138,11 @@ class Phonebooks:
     def user_phone_manage_add(self, user_info):
         rid = user_info.get('rid','')
         users = user_info.get('users','')
+        user_list = []
         for user in users:
             uname = user.get('name','')
+            phone_list = []
+            mail_list = []
             if uname.strip == '':
                 return (-1, 'failed')
             phones = user.get('phones','')
@@ -153,6 +156,8 @@ class Phonebooks:
                 if p.strip() != '':
                     pid = utils.get_uuid()
                     db.insert(utils.DB_TABLE_PHONE,pid=pid,uid=uid,phone=p,intime=curtime)
+                    phone_dic = dict(pid=pid,uid=uid,phone=p,intime=curtime)
+                    phone_list.append(phone_dic)
                     pass
             mails = user.get('mails','')
             for mail in mails:
@@ -160,11 +165,15 @@ class Phonebooks:
                 if mail_str.strip() != '':
                     mid = utils.get_uuid()
                     db.insert(utils.DB_TABLE_MAIL,mid=mid,uid=uid,mail=mail_str,intime=curtime)
-
-        return (0,'success')
+                    mail_dic = dict(mid=mid,uid=uid, mail=mail_str,intime=curtime)
+                    mail_list.append(mail_dic)
+            user_dic = dict(uid=uid,name=uname,phones=phone_list,mails=mail_list,intime=curtime)
+            user_list.append(user_dic)
+        return (0,'success',rid,user_list)
         pass
 
     def user_phone_manage_modify(self, user_info):
+
         pass
     def user_phone_manage_delete(self, user_info):
         users = user_info.get('users','')
@@ -191,23 +200,28 @@ class Phonebooks:
         for user in results:
             user_dic =dict(uid=user['uid'],name=user['name'],phone=user['phone'],mail=)
         '''
-        results = db.select(utils.DB_TABLE_USER, what='uid,name', where="rid=$rid",vars=vars)
+        results = db.select(utils.DB_TABLE_USER, what='uid,name,intime', where="rid=$rid",vars=vars)
         for result in results:
             uid = result['uid']
             uname = result['name']
+            uintime = result['intime']
             phone_list = []
             mail_list = []
-            phone_results = db.select(utils.DB_TABLE_PHONE, what='phone',where="uid=$uid",vars=dict(uid=uid))
+            phone_results = db.select(utils.DB_TABLE_PHONE, what='phone,pid,intime',where="uid=$uid",vars=dict(uid=uid))
             for phone_result in phone_results:
                 phone = phone_result['phone']
-                phone_dic = dict(phone=phone)
+                pid = phone_result['pid']
+                intime = phone_result['intime']
+                phone_dic = dict(phone=phone,pid=pid,intime=intime)
                 phone_list.append(phone_dic)
-            mail_results = db.select(utils.DB_TABLE_MAIL, what='mail',where="uid=$uid",vars=dict(uid=uid))
+            mail_results = db.select(utils.DB_TABLE_MAIL, what='mail,mid,intime',where="uid=$uid",vars=dict(uid=uid))
             for mail_result in mail_results:
                 mail = mail_result['mail']
-                mail_dic = dict(mail=mail)
+                mid = mail_result['mid']
+                intime = mail_result['intime']
+                mail_dic = dict(mail=mail,mid=mid,intime=intime)
                 mail_list.append(mail_dic)
-            user_dic = dict(uid=uid,name=uname,phones=phone_list,mails=mail_list)
+            user_dic = dict(uid=uid,name=uname,phones=phone_list,mails=mail_list,intime=uintime)
             user_list.append(user_dic)
         return (0, 'success',rid,user_list)
         pass
