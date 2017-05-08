@@ -171,9 +171,10 @@ class Phonebooks:
                     id_list = "'%s'" % uid
                 else:
                     id_list = "%s,'%s'" %(id_list, uid)
-        db.delete(utils.DB_TABLE_MAIL ,where="uid in (%s)" % (id_list))
-        db.delete(utils.DB_TABLE_PHONE ,where="uid in (%s)" % (id_list))
-        db.delete(utils.DB_TABLE_USER ,where="uid in (%s)" % (id_list))
+        vars = dict(uids=id_list)
+        db.delete(utils.DB_TABLE_MAIL ,where="uid in ($uids)",vars=vars)
+        db.delete(utils.DB_TABLE_PHONE ,where="uid in ($uids)",vars=vars)
+        db.delete(utils.DB_TABLE_USER ,where="uid in ($uids)",vars=vars)
         return (0,'success')
 
 app = web.application(urls, globals())
