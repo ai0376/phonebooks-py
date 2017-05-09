@@ -104,8 +104,6 @@ environment  **python 2.7.x**
 
 `pip install MySQL-python`
 
-`pip install python-memcached`
-
 
  
 

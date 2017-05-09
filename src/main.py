@@ -7,7 +7,6 @@ __time__ = '2017/4/27'
 import web
 import utils
 import json
-import memcache
 import jwt
 
 
@@ -16,12 +15,9 @@ urls = (
 )
 
 dbinfo= utils.get_cfg('db.ini','mysql')
-mcinfo = utils.get_cfg('db.ini','memcached')
 jwtinfo = utils.get_cfg('db.ini','jwt')
 
 db = web.database(dbn='mysql', user=dbinfo.get('user',''),pw=dbinfo.get('password',''),db=dbinfo.get('database',''),host=dbinfo.get('host',''), port=int(dbinfo.get('port','')))
-mc = memcache.Client(['%s:%s'%(mcinfo['host'],mcinfo['port'])])
-
 
 class Phonebooks:
     def POST(self):
@@ -278,25 +274,21 @@ class Phonebooks:
         return (0, 'success',rid,user_list)
         pass
     def __token_get(self,uid):
-        id = utils.get_uuid()
-        payload=dict(val=id,uid=uid)
+        iat = utils.get_iat()
+        exp = iat + int(jwtinfo.get('expired','7200'))
+        payload=dict(uid=uid,iat=iat,exp=exp)
         token = jwt.encode(payload,jwtinfo['key'], algorithm='HS256')
-        mc.set(uid,id,time=int(mcinfo.get('expired','7200')))
-        return dict(type='jwt',access_token=token)
+        return dict(type='JWT',access_token=token)
     def __verify_token(self,token):
-        token_decode = jwt.decode(token,jwtinfo['key'],algorithm='HS256')
-        print('token_de',token_decode)
-        uid = token_decode['uid']
-        value = token_decode['val']
-        ret = mc.get(uid)
-        if ret == value:
-            mc.set(uid,value,time=int(mcinfo.get('expired','7200')))
-            return (0,'success')
-        else:
-            return (-1,'token expired')
+        try:
+            token_decode = jwt.decode(token,jwtinfo['key'],algorithm='HS256')
+        except jwt.ExpiredSignatureError as e:
+            return (-1,e.message)
+        return (0,'success')
 
 app = web.application(urls, globals())
 application = app.wsgifunc()
+
 
 if __name__=='__main__':
 
