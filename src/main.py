@@ -289,8 +289,6 @@ class Phonebooks:
         uid = token_decode['uid']
         value = token_decode['val']
         ret = mc.get(uid)
-
-        print('ret:',ret)
         if ret == value:
             mc.set(uid,value,time=int(mcinfo.get('expired','7200')))
             return (0,'success')
