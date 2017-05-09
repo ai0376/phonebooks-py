@@ -36,7 +36,18 @@ def get_cfg(file,section):
 
         ret_dic = dict(host=host,port=port, database=database, user=user,password=password)
         return ret_dic
-
+    elif section == 'memcached':
+        host = config.get(section,'host')
+        port = config.get(section,'port')
+        user = config.get(section,'user')
+        password = config.get(section,'password')
+        expired = config.get(section,'expired')
+        ret_dic = dict(host=host,port=port, user=user,password=password,expired=expired)
+        return ret_dic
+    elif section == 'jwt':
+        key = config.get(section,'key')
+        ret_dic = dict(key=key)
+        return ret_dic
 
 def get_cur_time():
     return strftime("%Y%m%d%H%M%S",localtime())

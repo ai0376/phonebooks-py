@@ -7,6 +7,8 @@ __time__ = '2017/4/27'
 import web
 import utils
 import json
+import memcache
+import jwt
 
 
 urls = (
@@ -14,10 +16,12 @@ urls = (
 )
 
 dbinfo= utils.get_cfg('db.ini','mysql')
+mcinfo = utils.get_cfg('db.ini','memcached')
+jwtinfo = utils.get_cfg('db.ini','jwt')
 
 db = web.database(dbn='mysql', user=dbinfo.get('user',''),pw=dbinfo.get('password',''),db=dbinfo.get('database',''),host=dbinfo.get('host',''), port=int(dbinfo.get('port','')))
+mc = memcache.Client(['%s:%s'%(mcinfo['host'],mcinfo['port'])])
 
-print('db',db)
 
 class Phonebooks:
     def POST(self):
@@ -52,7 +56,7 @@ class Phonebooks:
         elif op == 1003: #user login
             ret = self.user_login(req_json)
             if ret[0] is 0:
-                response = {'ret':ret[0],'msg':ret[1],'num':ret[2],'rid':ret[3]}
+                response = {'ret':ret[0],'msg':ret[1],'num':ret[2],'rid':ret[3],'token':ret[4]}
             else:
                 response = {'ret':ret[0],'msg':ret[1]}
             return  json.dumps(response)
@@ -139,7 +143,8 @@ class Phonebooks:
         results = db.select(utils.DB_TABLE_USER, what="uid",where="rid='%s'" % (rid))
         uids = list(results)
         num = len(uids)
-        return (0,'success', num, rid)
+        access_token = self.__token_get(rid)
+        return (0,'success', num, rid,access_token)
 
     def user_phone_manage_add(self, user_info):
         rid = user_info.get('rid','')
@@ -272,6 +277,25 @@ class Phonebooks:
             user_list.append(user_dic)
         return (0, 'success',rid,user_list)
         pass
+    def __token_get(self,uid):
+        id = utils.get_uuid()
+        payload=dict(val=id,uid=uid)
+        token = jwt.encode(payload,jwtinfo['key'], algorithm='HS256')
+        mc.set(uid,id,time=int(mcinfo.get('expired','7200')))
+        return dict(type='jwt',access_token=token)
+    def __verify_token(self,token):
+        token_decode = jwt.decode(token,jwtinfo['key'],algorithm='HS256')
+        print('token_de',token_decode)
+        uid = token_decode['uid']
+        value = token_decode['val']
+        ret = mc.get(uid)
+
+        print('ret:',ret)
+        if ret == value:
+            mc.set(uid,value,time=int(mcinfo.get('expired','7200')))
+            return (0,'success')
+        else:
+            return (-1,'token expired')
 
 app = web.application(urls, globals())
 application = app.wsgifunc()

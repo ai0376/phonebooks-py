@@ -106,7 +106,6 @@ environment  **python 2.7.x**
 
 `pip install python-memcached`
 
-`pip install pyjwt`
 
  
 
