@@ -96,3 +96,18 @@
 ```
 
 
+#  Dependent Packages
+
+environment  **python 2.7.x**
+
+`pip install web.py`
+
+`pip install MySQL-python`
+
+`pip install python-memcached`
+
+`pip install pyjwt`
+
+ 
+
+
