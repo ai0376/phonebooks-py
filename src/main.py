@@ -189,9 +189,10 @@ class Phonebooks:
             pid = phone.get('pid','')
             phone = phone.get('phone','')
             if pid: #update
-                vars = dict(pid=pid,phone=phone,intime=utils.get_cur_time())
-                db.update(utils.DB_TABLE_PHONE, where="pid=$pid",phone="$phone",intime="$intime",vars=vars)
-                phone_dic= dict(pid=pid,phone=phone,intime=vars['intime'])
+                vars = dict(pid=pid)
+                intime_new = utils.get_cur_time()
+                db.update(utils.DB_TABLE_PHONE, where="pid=$pid",phone=phone,intime=intime_new,vars=vars)
+                phone_dic= dict(pid=pid,phone=phone,intime=intime_new)
                 phones_list.append(phone_dic)
                 pass
             else: #insert
@@ -206,9 +207,10 @@ class Phonebooks:
             mid = mail.get('mid','')
             mail_str = mail.get('mail','')
             if mid:
-                vars = dict(mid=mid,mail=mail_str,intime=utils.get_cur_time())
-                db.update(utils.DB_TABLE_MAIL, where="mid=$mid",mail="$mail",intime="$intime",vars=vars)
-                mail_dic = dict(mid=mid,mail=mail_str,intime=vars['intime'])
+                vars = dict(mid=mid)
+                intime_new = utils.get_cur_time()
+                db.update(utils.DB_TABLE_MAIL, where="mid=$mid",mail=mail_str ,intime=intime_new,vars=vars)
+                mail_dic = dict(mid=mid,mail=mail_str,intime=intime_new)
                 mails_list.append(mail_dic)
                 pass
             else:
