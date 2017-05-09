@@ -289,7 +289,13 @@ class Phonebooks:
 app = web.application(urls, globals())
 application = app.wsgifunc()
 
+'''
+Deployment with gunicorn:
 
+gunicorn -b ip:port main:application --access-logfile access.log --error-logfile error.log  -w 4 -D
+
+
+'''
 if __name__=='__main__':
 
     app.run()
