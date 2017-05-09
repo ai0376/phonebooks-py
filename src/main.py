@@ -71,7 +71,7 @@ class Phonebooks:
         elif op == 1006: #user phone modify
             ret = self.user_phone_manage_modify(req_json)
             if ret[0] is 0:
-                response = {'ret':ret[0],'msg':ret[1],'rid':ret[2],'users':ret[3]}
+                response = {'ret':ret[0],'msg':ret[1],'uid':ret[2],'user':ret[3]}
             else:
                 response = {'ret':ret[0],'msg':ret[1]}
             return json.dumps(response)
@@ -179,8 +179,47 @@ class Phonebooks:
         pass
 
     def user_phone_manage_modify(self, user_info):
-
-        pass
+        uid = user_info.get('uid','')
+        user = user_info.get('user','')
+        uname = user.get('name','')
+        phones = user.get('phones','')
+        phones_list = []
+        mails_list = []
+        for phone in phones:
+            pid = phone.get('pid','')
+            phone = phone.get('phone','')
+            if pid: #update
+                vars = dict(pid=pid,phone=phone,intime=utils.get_cur_time())
+                db.update(utils.DB_TABLE_PHONE, where="pid=$pid",phone="$phone",intime="$intime",vars=vars)
+                phone_dic= dict(pid=pid,phone=phone,intime=vars['intime'])
+                phones_list.append(phone_dic)
+                pass
+            else: #insert
+                pid_new = utils.get_uuid()
+                intime_new = utils.get_cur_time()
+                db.insert(utils.DB_TABLE_PHONE,uid=uid,phone=phone,pid=pid_new,intime=intime_new)
+                phone_dic= dict(pid=pid_new,phone=phone,intime=intime_new)
+                phones_list.append(phone_dic)
+                pass
+        mails = user.get('mails','')
+        for mail in mails:
+            mid = mail.get('mid','')
+            mail_str = mail.get('mail','')
+            if mid:
+                vars = dict(mid=mid,mail=mail_str,intime=utils.get_cur_time())
+                db.update(utils.DB_TABLE_MAIL, where="mid=$mid",mail="$mail",intime="$intime",vars=vars)
+                mail_dic = dict(mid=mid,mail=mail_str,intime=vars['intime'])
+                mails_list.append(mail_dic)
+                pass
+            else:
+                mid_new = utils.get_uuid()
+                intime_new = utils.get_cur_time()
+                db.insert(utils.DB_TABLE_MAIL,uid=uid,mail=mail_str,mid=mid_new,intime=intime_new)
+                mail_dic = dict(mid=mid_new,mail=mail_str,intime=intime_new)
+                mails_list.append(mail_dic)
+                pass
+        user_dic = dict(uid=uid,name=uname,phones=phones_list,mails=mails_list)
+        return (0,'success',uid,user_dic)
     def user_phone_manage_delete(self, user_info):
         users = user_info.get('users','')
         id_list = ''
