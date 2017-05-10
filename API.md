@@ -25,6 +25,11 @@
 }
 ```
 ## 人员添加
+
+header 中需要携带
+
+`AUTHORIZATION: JWT access_token`
+
 ```
 {
     "op":1005,
@@ -47,6 +52,11 @@
 }
 ```
 ## 人员删除
+
+header 中需要携带
+
+`AUTHORIZATION: JWT access_token`
+
 ```
 {
     "op":1007,
@@ -59,6 +69,11 @@
 ```
 
 ## 人员修改
+
+header 中需要携带
+
+`AUTHORIZATION: JWT access_token`
+
 ```
 {
     "op":1006,
@@ -88,6 +103,11 @@
 ```
 
 ## 人员查询
+header 中需要携带
+
+`AUTHORIZATION: JWT access_token`
+
+
 ```
 {
     "op":1009,

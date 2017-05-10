@@ -8,6 +8,7 @@ import web
 import utils
 import json
 import jwt
+import re
 
 
 urls = (
@@ -58,9 +59,23 @@ class Phonebooks:
             return  json.dumps(response)
 
         elif op == 1004: #logout
-
             pass
+
         elif op == 1005: # user phone add
+            auth = web.ctx.env.get('HTTP_AUTHORIZATION')
+            if auth is None:
+                web.ctx.status='401 Unauthorized'
+                return
+            else:
+                auth = re.sub('^JWT ','' ,auth)
+                print('auth:',auth)
+                ret = self.__verify_token(auth)
+                if ret[0] != 0:
+                    response = {'ret':ret[0],'msg':ret[1]}
+                    return json.dumps(response)
+                else:
+                    pass
+
             ret = self.user_phone_manage_add(req_json)
             if ret[0] is 0:
                 response = {'ret':ret[0],'msg':ret[1],'rid':ret[2],'users':ret[3]}
@@ -69,6 +84,19 @@ class Phonebooks:
             return json.dumps(response)
             pass
         elif op == 1006: #user phone modify
+            auth = web.ctx.env.get('HTTP_AUTHORIZATION')
+            if auth is None:
+                web.ctx.status='401 Unauthorized'
+                return
+            else:
+                auth = re.sub('^JWT ','' ,auth)
+                print('auth:',auth)
+                ret = self.__verify_token(auth)
+                if ret[0] != 0:
+                    response = {'ret':ret[0],'msg':ret[1]}
+                    return json.dumps(response)
+                else:
+                    pass
             ret = self.user_phone_manage_modify(req_json)
             if ret[0] is 0:
                 response = {'ret':ret[0],'msg':ret[1],'uid':ret[2],'user':ret[3]}
@@ -77,6 +105,19 @@ class Phonebooks:
             return json.dumps(response)
             pass
         elif op == 1007: #user phone delete
+            auth = web.ctx.env.get('HTTP_AUTHORIZATION')
+            if auth is None:
+                web.ctx.status='401 Unauthorized'
+                return
+            else:
+                auth = re.sub('^JWT ','' ,auth)
+                print('auth:',auth)
+                ret = self.__verify_token(auth)
+                if ret[0] != 0:
+                    response = {'ret':ret[0],'msg':ret[1]}
+                    return json.dumps(response)
+                else:
+                    pass
             ret =  self.user_phone_manage_delete(req_json)
             if ret[0] is 0:
                 response = {'ret':ret[0],'msg':ret[1]}
@@ -87,6 +128,19 @@ class Phonebooks:
         elif op == 1008:
             pass
         elif op == 1009:
+            auth = web.ctx.env.get('HTTP_AUTHORIZATION')
+            if auth is None:
+                web.ctx.status='401 Unauthorized'
+                return
+            else:
+                auth = re.sub('^JWT ','' ,auth)
+                print('auth:',auth)
+                ret = self.__verify_token(auth)
+                if ret[0] != 0:
+                    response = {'ret':ret[0],'msg':ret[1]}
+                    return json.dumps(response)
+                else:
+                    pass
             ret = self.user_phone_get_all(req_json)
             if ret[0] is 0:
                 response = {'ret':ret[0],'msg':ret[1],'rid':ret[2],'users':ret[3]}
