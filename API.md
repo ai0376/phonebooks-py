@@ -11,8 +11,7 @@
     "phone":"13000000001",
     "email":"13000000001@163.com",
     "name":"zhangsan",
-    "password":"md5(123456)",
-    "intime":"20170501000000"
+    "password":"123456",
 }
 ```
 
