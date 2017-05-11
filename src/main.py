@@ -35,6 +35,7 @@ class Phonebooks:
         1007: user delete
         1008: search
         1009: get_all_user
+        1010: user query
         '''
         if op == 1001:
             ret = self.user_register(req_json)
@@ -144,6 +145,26 @@ class Phonebooks:
             ret = self.user_phone_get_all(req_json)
             if ret[0] is 0:
                 response = {'ret':ret[0],'msg':ret[1],'rid':ret[2],'users':ret[3]}
+            else:
+                response = {'ret':ret[0],'msg':ret[1]}
+            return json.dumps(response)
+        elif op == 1010:
+            auth = web.ctx.env.get('HTTP_AUTHORIZATION')
+            if auth is None:
+                web.ctx.status='401 Unauthorized'
+                return
+            else:
+                auth = re.sub('^JWT ','' ,auth)
+                print('auth:',auth)
+                ret = self.__verify_token(auth)
+                if ret[0] != 0:
+                    response = {'ret':ret[0],'msg':ret[1]}
+                    return json.dumps(response)
+                else:
+                    pass
+            ret = self.user_query(req_json)
+            if ret[0] is 0:
+                response = {'ret':ret[0],'msg':ret[1],'users':ret[2]}
             else:
                 response = {'ret':ret[0],'msg':ret[1]}
             return json.dumps(response)
@@ -292,6 +313,7 @@ class Phonebooks:
         db.delete(utils.DB_TABLE_PHONE ,where="uid in ($uids)",vars=vars)
         db.delete(utils.DB_TABLE_USER ,where="uid in ($uids)",vars=vars)
         return (0,'success')
+
     def user_phone_get_all(self, user_info):
         rid = user_info.get('rid','')
         vars = dict(rid=rid)
@@ -326,7 +348,39 @@ class Phonebooks:
             user_dic = dict(uid=uid,name=uname,phones=phone_list,mails=mail_list,intime=uintime)
             user_list.append(user_dic)
         return (0, 'success',rid,user_list)
-        pass
+
+    def user_query(self,user_info):
+        users = user_info.get('users','')
+        user_list=[]
+        for user in users:
+            uid = user.get('uid','')
+            vars = dict(uid=uid)
+            phone_list = []
+            mail_list = []
+            results = db.select(utils.DB_TABLE_USER, what='uid,name,intime', where="uid=$uid",vars=vars)
+            for result in results:
+                #id = result['uid']
+                name = result['name']
+                intime = result['intime']
+            phone_results = db.select(utils.DB_TABLE_PHONE, what='phone,pid,intime',where="uid=$uid",vars=vars)
+            for phone_result in phone_results:
+                phone = phone_result['phone']
+                pid = phone_result['pid']
+                pintime = phone_result['intime']
+                phone_dic = dict(phone=phone,pid=pid,intime=pintime)
+                phone_list.append(phone_dic)
+
+            mail_results = db.select(utils.DB_TABLE_MAIL, what='mail,mid,intime',where="uid=$uid",vars=vars)
+            for mail_result in mail_results:
+                mail = mail_result['mail']
+                mid = mail_result['mid']
+                mintime = mail_result['intime']
+                mail_dic = dict(mid=mid,mail=mail,intime=mintime)
+                mail_list.append(mail_dic)
+            user_dic = dict(uid=uid,name=name,intime=intime,phones=phone_list,mails=mail_list)
+            user_list.append(user_dic)
+        return (0,'success',user_list)
+
     def __token_get(self,uid):
         iat = utils.get_iat()
         exp = iat + int(jwtinfo.get('expired','7200'))
