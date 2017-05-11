@@ -68,7 +68,7 @@ class Phonebooks:
                 web.ctx.status='401 Unauthorized'
                 return
             else:
-                auth = re.sub('^JWT ','' ,auth)
+                auth = re.sub('^[Jj][Ww][Tt] ','' ,auth)
                 print('auth:',auth)
                 ret = self.__verify_token(auth)
                 if ret[0] != 0:
@@ -90,7 +90,7 @@ class Phonebooks:
                 web.ctx.status='401 Unauthorized'
                 return
             else:
-                auth = re.sub('^JWT ','' ,auth)
+                auth = re.sub('^[Jj][Ww][Tt] ','' ,auth)
                 print('auth:',auth)
                 ret = self.__verify_token(auth)
                 if ret[0] != 0:
@@ -111,7 +111,7 @@ class Phonebooks:
                 web.ctx.status='401 Unauthorized'
                 return
             else:
-                auth = re.sub('^JWT ','' ,auth)
+                auth = re.sub('^[Jj][Ww][Tt] ','' ,auth)
                 print('auth:',auth)
                 ret = self.__verify_token(auth)
                 if ret[0] != 0:
@@ -134,7 +134,7 @@ class Phonebooks:
                 web.ctx.status='401 Unauthorized'
                 return
             else:
-                auth = re.sub('^JWT ','' ,auth)
+                auth = re.sub('^[Jj][Ww][Tt] ','' ,auth)
                 print('auth:',auth)
                 ret = self.__verify_token(auth)
                 if ret[0] != 0:
@@ -154,7 +154,7 @@ class Phonebooks:
                 web.ctx.status='401 Unauthorized'
                 return
             else:
-                auth = re.sub('^JWT ','' ,auth)
+                auth = re.sub('^[Jj][Ww][Tt] ','' ,auth)
                 print('auth:',auth)
                 ret = self.__verify_token(auth)
                 if ret[0] != 0:
