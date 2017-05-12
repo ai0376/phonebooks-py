@@ -20,7 +20,7 @@ jwtinfo = utils.get_cfg('db.ini','jwt')
 
 db = web.database(dbn='mysql', user=dbinfo.get('user',''),pw=dbinfo.get('password',''),db=dbinfo.get('database',''),host=dbinfo.get('host',''), port=int(dbinfo.get('port','')))
 
-auth_operates = (1005,1006,1007,1009,1010)
+auth_operates = (1005,1006,10061,10062,1007,1009,1010)
 
 class Phonebooks:
     def POST(self):
@@ -91,6 +91,22 @@ class Phonebooks:
             ret = self.user_phone_manage_modify(req_json)
             if ret[0] is 0:
                 response = {'ret':ret[0],'msg':ret[1],'uid':ret[2],'user':ret[3]}
+            else:
+                response = {'ret':ret[0],'msg':ret[1]}
+            return json.dumps(response)
+            pass
+        elif op == 10061: # user phone manage
+            ret = self.user_phone_manage(req_json)
+            if ret[0] is 0:
+                response = {'ret':ret[0],'msg':ret[1],'uid':ret[2],'phone_info':ret[3]}
+            else:
+                response = {'ret':ret[0],'msg':ret[1]}
+            return json.dumps(response)
+            pass
+        elif op == 10062:   #user mail manage
+            ret = self.user_mail_manage(req_json)
+            if ret[0] is 0:
+                response = {'ret':ret[0],'msg':ret[1],'uid':ret[2],'mail_info':ret[3]}
             else:
                 response = {'ret':ret[0],'msg':ret[1]}
             return json.dumps(response)
@@ -331,6 +347,46 @@ class Phonebooks:
             user_dic = dict(uid=uid,name=name,intime=intime,phones=phone_list,mails=mail_list)
             user_list.append(user_dic)
         return (0,'success',user_list)
+    def user_phone_manage(self, user_info):
+        uid = user_info.get('uid','')
+        action = user_info.get('action','')
+        phone_info = user_info.get('phone_info','')
+        if action == 0: #add
+            phone = phone_info.get('phone','')
+            pid = utils.get_uuid();
+            pintime = utils.get_cur_time()
+            db.insert(utils.DB_TABLE_PHONE,uid=uid,pid=pid,phone=phone,intime=pintime)
+            phone_dic = dict(phone=phone,pid=pid,intime=pintime)
+            return (0,'success',uid,phone_dic)
+            pass
+        elif action == 1: #delete
+            pid = phone_info.get('pid')
+            vars=dict(pid=pid)
+            db.delete(utils.DB_TABLE_PHONE,where="pid=$pid",vars=vars)
+            phone_dic=dict(pid=pid)
+            return (0,'success',uid,phone_dic)
+            pass
+        pass
+    def user_mail_manage(self, user_info):
+        uid = user_info.get('uid','')
+        action = user_info.get('action','')
+        mail_info = user_info.get('mail_info','')
+        if action == 0: #add
+            mail = mail_info.get('mail','')
+            mid = utils.get_uuid();
+            mintime = utils.get_cur_time()
+            db.insert(utils.DB_TABLE_MAIL,uid=uid,mid=mid,mail=mail,intime=mintime)
+            mail_dic = dict(mail=mail,mid=mid,intime=mintime)
+            return (0,'success',uid,mail_dic)
+            pass
+        elif action == 1: #delete
+            mid = mail_info.get('mid')
+            vars=dict(mid=mid)
+            db.delete(utils.DB_TABLE_MAIL,where="mid=$mid",vars=vars)
+            mail_dic=dict(mid=mid)
+            return (0,'success',uid,mail_dic)
+            pass
+        pass
 
     def __token_get(self,uid):
         iat = utils.get_iat()

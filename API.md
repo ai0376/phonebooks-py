@@ -214,6 +214,64 @@ respon
 }
 ```
 
+## 个人手机号管理
+
+header 中需要携带
+
+`AUTHORIZATION: JWT access_token`
+
+```
+action = 0 is add 
+
+{
+    "op":10061,
+    "uid":"fb0f7c4f-3627-11e7-b806-3010b3c7bffa",
+    "action":0,
+    "phone_info":{
+        "phone":"13000001234"
+    }
+}
+
+action = 1 is delete
+
+{
+    "op":10061,
+    "uid":"fb0f7c4f-3627-11e7-b806-3010b3c7bffa",
+    "action":1,
+    "phone_info":{
+        "pid":"69e5ecf0-3627-11e7-b53b-3010b3c7bffa"
+    }
+}
+```
+
+## 个人邮箱管理
+
+header 中需要携带
+
+`AUTHORIZATION: JWT access_token`
+
+```
+action = 0 is add 
+
+{
+    "op":10062,
+    "uid":"fb0f7c4f-3627-11e7-b806-3010b3c7bffa",
+    "action":0,
+    "mail_info":{
+        "mail":"13000001234@qq.com"
+    }
+}
+
+action = 1 is delete
+
+{
+    "op":10062,
+    "uid":"fb0f7c4f-3627-11e7-b806-3010b3c7bffa",
+    "action":1,
+    "mail_info":{
+        "mid":"69e5ecf0-3627-11e7-b53b-3010b3c7bffa"
+    }
+}
 
 ## 获取所有人
 header 中需要携带
