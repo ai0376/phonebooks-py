@@ -272,6 +272,7 @@ action = 1 is delete
         "mid":"69e5ecf0-3627-11e7-b53b-3010b3c7bffa"
     }
 }
+```
 
 ## 获取所有人
 header 中需要携带
@@ -279,7 +280,6 @@ header 中需要携带
 `AUTHORIZATION: JWT access_token`
 
 request
-
 ```
 {
     "op":1009,
