@@ -1,9 +1,10 @@
 # API for PhoneBooks
 
-ÇëÇó·½Ê½£º HTTP POST
-Êı¾İ½»»»¸ñÊ½£º JSon
+Request Type: HTTP POST
 
-## ×¢²á(register)
+Data Format: JSon
+
+## register
 
 request
 
@@ -26,7 +27,7 @@ respon
 }
 ```
 
-## µÇÂ¼
+## Login
 
 request
 
@@ -52,9 +53,9 @@ respon
     "ret":0
 }
 ```
-## ÈËÔ±Ìí¼Ó
+## Person Add
 
-header ÖĞĞèÒªĞ¯´ø
+Header Format
 
 `AUTHORIZATION: JWT access_token`
 
@@ -114,9 +115,9 @@ respon
     "ret":0
 }
 ```
-## ÈËÔ±É¾³ı
+## Person Delete
 
-header ÖĞĞèÒªĞ¯´ø
+Header Format
 
 `AUTHORIZATION: JWT access_token`
 
@@ -142,9 +143,9 @@ respon
 }
 ```
 
-## ÈËÔ±ĞŞ¸Ä
+## Person Modify
 
-header ÖĞĞèÒªĞ¯´ø
+Header Format
 
 `AUTHORIZATION: JWT access_token`
 
@@ -155,7 +156,7 @@ request
     "op":1006,
     "uid":"fb0f7c4f-3627-11e7-b806-3010b3c7bffa",
     "user":{
-        "name":"Áõ¿É",
+        "name":"ï¿½ï¿½ï¿½ï¿½",
         "phones":[
             {
                 "pid":"fd1fe5c0-3627-11e7-8972-3010b3c7bffa",
@@ -209,14 +210,14 @@ respon
             }
         ],
         "uid":"fb0f7c4f-3627-11e7-b806-3010b3c7bffa",
-        "name":"Áõ¿É"
+        "name":"ï¿½ï¿½ï¿½ï¿½"
     }
 }
 ```
 
-## ¸öÈËÊÖ»úºÅ¹ÜÀí
+## ä¸ªäººæ‰‹æœºå·ç®¡ç†
 
-header ÖĞĞèÒªĞ¯´ø
+Header Format
 
 `AUTHORIZATION: JWT access_token`
 
@@ -244,9 +245,9 @@ action = 1 is delete
 }
 ```
 
-## ¸öÈËÓÊÏä¹ÜÀí
+## ä¸ªäººé‚®ç®±ç®¡ç†
 
-header ÖĞĞèÒªĞ¯´ø
+Header Format
 
 `AUTHORIZATION: JWT access_token`
 
@@ -274,8 +275,8 @@ action = 1 is delete
 }
 ```
 
-## »ñÈ¡ËùÓĞÈË
-header ÖĞĞèÒªĞ¯´ø
+## è·å–æ‰€æœ‰äºº
+Header Format
 
 `AUTHORIZATION: JWT access_token`
 
@@ -339,14 +340,16 @@ respon
             ],
             "intime":"20170511165820",
             "uid":"fb0f7c4f-3627-11e7-b806-3010b3c7bffa",
-            "name":"Áõ¿É"
+            "name":"ï¿½ï¿½ï¿½ï¿½"
         }
     ],
     "ret":0
 }
 ```
 
-## ÈËÔ±²éÑ¯
+## äººå‘˜æŸ¥è¯¢
+
+Header Format
 
 `AUTHORIZATION: JWT access_token`
 
@@ -392,13 +395,6 @@ respon
 }
 ```
 
-#  Dependent Packages
-
-environment  **python 2.7.x**
-
-`pip install web.py`
-
-`pip install MySQL-python`
 
 
  
